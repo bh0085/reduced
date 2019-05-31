@@ -1,26 +1,26 @@
 # 
-from __future__ import division
+from _config import REDUCED_LIB
 import _config
 import sys, os, fnmatch, datetime, subprocess, copy
 import numpy as np
 from collections import defaultdict
 sys.path.append('/cluster/mshen/')
-from mylib import util
-from mylib import compbio
-from itertools import izip
+from mybio import util
+
 import pickle
 import pandas as pd
 
 # Default params
+if not "__file__" in vars(): __file__="b_test"
 inp_dir = _config.OUT_PLACE + 'a_split/'
 NAME = util.get_fn(__file__)
 out_place = _config.OUT_PLACE + NAME + '/'
 util.ensure_dir_exists(out_place)
-exp_design = pd.read_csv(_config.DATA_DIR + 'reduced.csv')
+exp_design = REDUCED_LIB
 
 names_targets = dict()
 for idx, row in exp_design.iterrows():
-  names_targets[row['Name']] = row['Full target sequence']
+  names_targets[row['Name']] = row['Designed sequence (61-bp, cutsite at position 34 by 0-index)']
 
 ##
 # Alignments
@@ -116,14 +116,14 @@ def init_alignment_buffer():
   return alignment_buffer
 
 def flush_alignments(alignment_buffer, out_dir):
-  print 'Flushing... \n%s' % (datetime.datetime.now())
+  print(f'Flushing... \n{datetime.datetime.now()}' )
   for exp in alignment_buffer:
-    with open(out_dir + '%s.txt' % (exp), 'a') as f:
+    with open(out_dir + f'{exp}.txt', 'a') as f:
       for align in alignment_buffer[exp]:
         f.write(align)
   new_alignment_buffer = init_alignment_buffer()
-  print 'Done flushing.\n%s' % (datetime.datetime.now())
-  print out_dir + '%s.txt' % (exp), 'a'
+  print('Done flushing.\n{datetime.datetime.now()}')
+  print(out_dir + f'{exp}.txt' , 'a')
   
   return new_alignment_buffer
 
@@ -133,11 +133,14 @@ def prepare_outfns(out_dir):
     util.exists_empty_fn(out_fn)
   return
 
+def reverse_complement(string):
+  return "".join([ {"A":"T","G":"C","C":"G","T":"A","N":"N"}[l]  for l in string][::-1])
+
 ##
 # Main
 ##
 def matchmaker(nm, split):
-  print nm, split
+  print (nm, split)
   stdout_fn = _config.SRC_DIR + 'nh_c_%s_%s.out' % (nm, split)
   util.exists_empty_fn(stdout_fn)
   out_dir = out_place + nm + '/' + split + '/'
@@ -152,9 +155,9 @@ def matchmaker(nm, split):
 
   qf = 0
 
+  print(inp_fn)
   tot_reads = util.line_count(inp_fn)
   timer = util.Timer(total = tot_reads)
-  from itertools import izip
   with open(inp_fn) as f:
     for i, line in enumerate(f):
       if i % 4 == 0:
@@ -170,10 +173,9 @@ def matchmaker(nm, split):
           continue
 
         
-        #print ("NEW ALIGNMENT")
         #l2 = compbio.reverse_complement(l2)
         #l2 = l2[82] # -- note, changed from :61 to 61:. Can comment out entirely?
-        l2 = compbio.reverse_complement(l2)
+        l2 = reverse_complement(l2)
 
         #l2 = l2[-62:]
         
@@ -214,7 +216,7 @@ def matchmaker(nm, split):
 ##
 def gen_qsubs():
   # Generate qsub shell scripts and commands for easy parallelization
-  print 'Generating qsub scripts...'
+  print ('Generating qsub scripts...')
   qsubs_dir = _config.QSUBS_DIR + NAME + '/'
   util.ensure_dir_exists(qsubs_dir)
   qsub_commands = []
@@ -242,13 +244,14 @@ def gen_qsubs():
   with open(qsubs_dir + '_commands.txt', 'w') as f:
     f.write('\n'.join(qsub_commands))
 
-  print 'Wrote %s shell scripts to %s' % (num_scripts, qsubs_dir)
+  print ('Wrote %s shell scripts to %s' % (num_scripts, qsubs_dir))
   return
 
 @util.time_dec
 def main(nm = '', split = ''):
-  print NAME  
 
+
+  #raise Exception()
   if nm == '' and split == '':
     gen_qsubs()
     return
