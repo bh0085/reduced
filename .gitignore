@@ -7,4 +7,5 @@
 #/libs/*
 #/data/*
 #/out/*
-split_cmds.txt
+
+*split_cmds.txt
