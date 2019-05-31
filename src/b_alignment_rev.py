@@ -116,14 +116,14 @@ def init_alignment_buffer():
   return alignment_buffer
 
 def flush_alignments(alignment_buffer, out_dir):
-  print(f'Flushing... \n{datetime.datetime.now()}' )
+  #print(f'Flushing... \n{datetime.datetime.now()}' )
   for exp in alignment_buffer:
     with open(out_dir + f'{exp}.txt', 'a') as f:
       for align in alignment_buffer[exp]:
         f.write(align)
   new_alignment_buffer = init_alignment_buffer()
-  print('Done flushing.\n{datetime.datetime.now()}')
-  print(out_dir + f'{exp}.txt' , 'a')
+  #print(f'Done flushing.\n{datetime.datetime.now()}')
+  #print(out_dir + f'{exp}.txt' , 'a')
   
   return new_alignment_buffer
 
@@ -225,7 +225,9 @@ def gen_qsubs():
     _nm = row.Name
     num_scripts = 0
     for _split in range(15):
-      command = 'source activate py3; python %s.py %s %s' % (NAME, _nm, _split)
+      command = '/cluster/bh0085/anaconda27/envs/py3/bin/python %s.py %s %s' % (NAME, _nm, _split)
+      #print(command)
+      #break
       script_id = NAME.split('_')[0]
 
       # Write shell scripts
