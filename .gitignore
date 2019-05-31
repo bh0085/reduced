@@ -1,5 +1,6 @@
 .vscode
 /src/__pycache__/*.pyc
+*_config.py
 *~
 /*/
 !/src
