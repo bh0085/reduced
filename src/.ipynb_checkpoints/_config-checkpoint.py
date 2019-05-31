@@ -28,3 +28,8 @@ REDUCED_LIB_DESIGN = pd.read_csv("~/data/reduced_lib_design.csv")
 REDUCED_LIB_DESIGN["Name"] = REDUCED_LIB_DESIGN["Identifier number"].apply(lambda x: int(x)) - 1
 REDUCED_LIB_DESIGN.set_index("Name")
 
+#######################################################
+#######################################################
+
+CLEAN = False       # Values = 'ask', True, False
+
