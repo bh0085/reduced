@@ -1,5 +1,6 @@
-import sys
-import os
+import os, re, sys
+import pandas as pd
+
 
 PRJ_DIR = '/cluster/bh0085/prj/reduced/reduced_sm/'
 
@@ -24,7 +25,7 @@ SEQUENCING_READS_META = {"reads_28": {"reads_place":"/cluster/bh0085/shortreads/
                             "lib_file":"../libs/smallmol2 sequencing directory contents - lib502.csv"}
                }
 
-REDUCED_LIB_DESIGN = pd.read_csv("~/data/reduced_lib_design.csv")
-REDUCED_LIB_DESIGN["Name"] = REDUCED_LIB_DESIGN["Identifier number"].apply(lambda x: int(x)) - 1
-REDUCED_LIB_DESIGN.set_index("Name")
+REDUCED_LIB = pd.read_csv("~/data/reduced_lib_design.csv")
+REDUCED_LIB["Name"] = REDUCED_LIB["Identifier number"].apply(lambda x: int(x)) - 1
+REDUCED_LIB.set_index("Name")
 

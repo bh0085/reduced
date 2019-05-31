@@ -1,5 +1,9 @@
 .vscode
+/src/__pycache__/*.pyc
 *~
 /*/
 !/src
-*.pyc
+/qsub/*
+#/libs/*
+#/data/*
+#/out/*
