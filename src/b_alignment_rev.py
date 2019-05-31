@@ -1,5 +1,5 @@
 # 
-from _config import REDUCED_LIB
+from _config import REDUCED_LIB, SEQUENCING_INFO
 import _config
 import sys, os, fnmatch, datetime, subprocess, copy
 import numpy as np
@@ -221,12 +221,9 @@ def gen_qsubs():
   util.ensure_dir_exists(qsubs_dir)
   qsub_commands = []
 
-  num_scripts = 0
-  for _nm in [
-      
-      "LIB037937_GEN00140{0}_S{1}_L00{2}_R2".format(num, num - 696 + 8, lane)
-      for lane in range(1,5) for num in range(695,701)
-  ]:
+  for k, row in SEQUENCING_INFO.iterrows():
+    _nm = row.Name
+    num_scripts = 0
     for _split in range(15):
       command = 'python %s.py %s %s' % (NAME, _nm, _split)
       script_id = NAME.split('_')[0]

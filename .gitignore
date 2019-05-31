@@ -1,5 +1,6 @@
 .vscode
 /src/__pycache__/*.pyc
+*_config.py
 *~
 /*/
 !/src
@@ -7,5 +8,9 @@
 #/libs/*
 #/data/*
 #/out/*
+
+/src/*.sh.e*
+/src/*.sh.o*
+/src/nh*.out
 
 *split_cmds.txt
