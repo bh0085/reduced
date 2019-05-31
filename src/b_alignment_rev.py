@@ -225,7 +225,7 @@ def gen_qsubs():
     _nm = row.Name
     num_scripts = 0
     for _split in range(15):
-      command = 'python %s.py %s %s' % (NAME, _nm, _split)
+      command = 'source activate py3; python %s.py %s %s' % (NAME, _nm, _split)
       script_id = NAME.split('_')[0]
 
       # Write shell scripts
