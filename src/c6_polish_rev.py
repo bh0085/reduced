@@ -1,13 +1,14 @@
 # 
-from __future__ import division
+
 import _config
 import sys, os, fnmatch, datetime, subprocess
-sys.path.append('/cluster/mshen/')
+sys.path.append('/cluster/bh0085/')
 import numpy as np
 from collections import defaultdict
-from mylib import util
-from itertools import izip
+from mybio import util
 import pickle
+
+from _config import REDUCED_LIB, SEQUENCING_INFO
 
 # Default params
 inp_place = _config.OUT_PLACE + 'b_alignment_rev/'
@@ -104,7 +105,7 @@ def count_indels(s1, s2):
   num_ins = len(ts2.replace('-', ' ').split()) - 1
   
   if "TCCGTGCTGTAACGAAAGGATGGGTGCGACGCGTCATACGAATCAACTGTTCAACAACAGCA" in s1:
-    print num_dels, num_ins
+    print(num_dels, num_ins)
     
   return num_dels, num_ins
 
@@ -222,9 +223,9 @@ def detect_wildtype(read, genome):
       return True
     else:
       if "TCCGTGCTGTAACGAAAGGATGGGTGCGACGCGTCATACGAATCAACTGTTCAACAACAGCA" in s1:
-        print num_dels, num_ins
-        print read
-        print genome
+        print(num_dels, num_ins)
+        print(read)
+        print(genome)
         raise Exception("WTF")
       
   return False
@@ -327,6 +328,8 @@ def pcr_chomp_process_elements(read, genome):
     length = min(read_idx, genome_idx)
     package = (read[:length], genome[:length])
 
+  print(read, genome)
+  print(length)
   new_read = read[length:]
   new_genome = genome[length:]
   return new_read, new_genome, element_nm, package
@@ -442,7 +445,7 @@ def categorize_alignment(read, genome):
 
   #raise Exception()
   if "TCCGTGCTGTAACGAAAGGATGGGTGCGACGCGTCATAGGATTACCGAGACCTACGCGAAC" in read:
-    print "GOT HERE"
+    print("GOT HERE")
   # Categorize wildtype
   if detect_wildtype(read, genome):
 
@@ -652,20 +655,17 @@ def remaster_aligns(inp_fn, data):
 ##
 def gen_qsubs():
   # Generate qsub shell scripts and commands for easy parallelization
-  print 'Generating qsub scripts...'
+  print('Generating qsub scripts...')
   qsubs_dir = _config.QSUBS_DIR + NAME + '/'
   util.ensure_dir_exists(qsubs_dir)
   qsub_commands = []
 
   num_scripts = 0
-  for bc in [
-      
-      "LIB037937_GEN00140{0}_S{1}_L00{2}_R2".format(num, num - 696 + 8, lane)
-      for lane in range(1,5) for num in range(695,701)
-  ]:
+  for k, exp in SEQUENCING_INFO.iterrows():
+    bc = exp.Name
     for start in range(0, 1):
-      end = start + 48
-      command = 'python %s.py %s %s %s' % (NAME, bc, start, end)
+      end = len(REDUCED_LIB)
+      command = 'python %s.py %s %s %s' % (NAME, bc, 0, end)
       script_id = NAME.split('_')[0]
 
       # Write shell scripts
@@ -681,13 +681,11 @@ def gen_qsubs():
   with open(qsubs_dir + '_commands.txt', 'w') as f:
     f.write('\n'.join(qsub_commands))
 
-  print 'Wrote %s shell scripts to %s' % (num_scripts, qsubs_dir)
+  print('Wrote %s shell scripts to %s' % (num_scripts, qsubs_dir))
   return
 
 @util.time_dec
 def main(nm = '', start = '', end = ''):
-  print NAME  
-  print nm
 
   if nm == '' and start == '' and end == '':
     gen_qsubs()
@@ -697,9 +695,9 @@ def main(nm = '', start = '', end = ''):
   out_dir = out_place + nm +'/'
   util.ensure_dir_exists(out_dir)
 
-  print 'Preparing alignment output directories...'
+  print('Preparing alignment output directories...')
   prepare_align_outdirs(out_dir, start, end)
-  print 'Done'
+  print('Done')
 
   global expected_cutsite
   expected_cutsite = 34

@@ -12,5 +12,8 @@
 /src/*.sh.e*
 /src/*.sh.o*
 /src/nh*.out
+/src/nh*
+*.bak
 
+*.swp
 *split_cmds.txt

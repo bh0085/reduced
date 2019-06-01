@@ -5,6 +5,7 @@ import sys, os, fnmatch, datetime, subprocess, copy
 import numpy as np
 from collections import defaultdict
 sys.path.append('/cluster/mshen/')
+sys.path.append('/cluster/bh0085')
 from mybio import util
 
 import pickle
@@ -188,7 +189,10 @@ def matchmaker(nm, split):
 
         # Run alignment
         best_idx, align = alignment(l2, cand_idxs)
+        align = align.decode("utf-8")
 
+        #if i %101 == 0:
+        #  print(align.decode("utf-8").count("-"))
 
         # Store alignment into buffer
         store_alignment(alignment_buffer, best_idx, align_header, align)
@@ -204,7 +208,7 @@ def matchmaker(nm, split):
           outf.write('Quality filtered pct: %s\n' % (qf / (i/4)))
 
 
-      timer.update()
+      #timer.update()
   
   # Final flush
   alignment_buffer = flush_alignments(alignment_buffer, out_dir)
