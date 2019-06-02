@@ -17,3 +17,5 @@
 
 *.swp
 *split_cmds.txt
+
+*.code-workspace
