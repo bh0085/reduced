@@ -18,4 +18,6 @@
 *.swp
 *split_cmds.txt
 
+.ipynb*
+
 *.code-workspace

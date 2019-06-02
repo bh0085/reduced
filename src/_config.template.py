@@ -2,8 +2,9 @@ import os, re, sys
 import pandas as pd
 
 
-PRJ_DIR = '/cluster/bh0085/prj/reduced_all/reduced_sm/'
 
+PRJ_DIR = '/cluster/bh0085/prj/reduced_all/reduced_liver/'
+PRJ_NAME = 'REDUCEDLIB_LIVER_May2019"
 
 #######################################################
 # Note: Directories should end in / always
@@ -14,15 +15,12 @@ OUT_PLACE = os.path.join(PRJ_DIR , 'out/')
 QSUBS_DIR = os.path.join( PRJ_DIR + 'qsubs/')
 
 
+
 #dictionary keyed by sequencing group names, containing:
 #  "reads_place" (with folders for each sequencing lane)
 #  "lib_file" (having names and descriptions associated with each sequencing lane)
-SEQUENCING_READS_META = {"reads_28": {"reads_place":"/cluster/bh0085/shortreads/190328Gif",
-                             "lib_file":"../libs/smallmol2 sequencing directory contents - lib28.csv"},
-                "reads_29":  {"reads_place":"/cluster/bh0085/shortreads/190329Gif",
-                              "lib_file":"../libs/smallmol2 sequencing directory contents - lib29.csv"},
-                "reads_502":{"reads_place":'/cluster/bh0085/shortreads/190502Gif',
-                            "lib_file":"../libs/smallmol2 sequencing directory contents - lib502.csv"}
+SEQUENCING_READS_META = {"reads_all": {"reads_place":"/cluster/bh0085/shortreads/190510Gif",
+                             "lib_file":"../libs/reduced_liver sequencing reads - lib510.csv"}
                }
 
 
@@ -52,14 +50,14 @@ for nm,vals in SEQUENCING_READS_META.items():
     #find fastq files using sequencing info DF
     if False in set(pd.notna(info.reads_location)):
         raise Exception(f"missing reads data file for {nm}")
-    info["fastq"] = info.apply(lambda x:[fn for fn in os.listdir(x.reads_location) if ~(pd.isna(x.reads_location)) & ( fn[-5:]=="fastq")][0],axis=1)
+    info["fastq"] = info.apply(lambda x:[fn for fn in os.listdir(x.reads_location) if ~(pd.isna(x.reads_location)) & ( fn[-5:]=="fastq") & ("_2_" in fn)][0],axis=1)
     info["fastq_path"] = info["reads_location"] +"/"+ info["fastq"]
     SEQUENCING_INFO = SEQUENCING_INFO.append(info)
      
  
 
 
-REDUCED_LIB = pd.read_csv("~/data/reduced_lib_design.csv")
+REDUCED_LIB = pd.read_csv("/cluster/bh0085/data/reduced_lib_design.csv")
 REDUCED_LIB["Name"] = REDUCED_LIB["Identifier number"].apply(lambda x: int(x)) - 1
 REDUCED_LIB.set_index("Name")
 
