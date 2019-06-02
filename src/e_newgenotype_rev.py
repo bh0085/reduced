@@ -1,21 +1,20 @@
 # 
-from __future__ import division
+
 import _config
 import sys, os, fnmatch, datetime, subprocess, math, pickle, imp
-sys.path.append('/cluster/mshen/')
+sys.path.append('/cluster/bh0085/')
 import fnmatch
 import numpy as np
 from collections import defaultdict
-from mylib import util
-from mylib import compbio
+from mybio import util, biofuncs
+
 import pandas as pd
+from _config import REDUCED_LIB, SEQUENCING_INFO
+
 
 # Default params
 DEFAULT_INP_DIR = _config.OUT_PLACE + 'c6_polish_rev/'
 NAME = util.get_fn(__file__)
-
-
-exp_design = pd.read_csv(_config.DATA_DIR + 'reduced.csv')
 
 
 crispr_cutsite = None
@@ -150,7 +149,7 @@ def check_ins_templated(read, genome, is_pos, ins_len):
 
   imer = read[is_pos : is_pos + ins_len]
   designed_genome = genome.replace('-', '')
-  rc_designed_genome = compbio.reverse_complement(designed_genome)
+  rc_designed_genome = biofuncs.reverse_complement(designed_genome)
   if imer not in designed_genome and imer not in rc_designed_genome:
     return 0, 'na', '', ''
 
@@ -188,7 +187,7 @@ def check_ins_templated(read, genome, is_pos, ins_len):
   template = read[fiveside : threeside]
 
   # get p2 and mh2
-  if template in genome[:is_pos] or template in compbio.reverse_complement(genome[:is_pos].replace('-', '')):
+  if template in genome[:is_pos] or template in biofuncs.reverse_complement(genome[:is_pos].replace('-', '')):
     p2 = fiveside_seq
     mh2 = threeside_seq
   else:
@@ -619,7 +618,6 @@ def get_wildtype(master_df, exp, exp_dir):
 # main 
 ##
 def genotype_data(inp_dir, out_dir, nm, start, end):
-  print nm
   start, end = int(start), int(end)
   master_df = pd.DataFrame()
 
@@ -637,7 +635,6 @@ def genotype_data(inp_dir, out_dir, nm, start, end):
     if not os.path.isdir(exp_dir):
       return
 
-    print exp
     
     # Noise categories
     master_df = get_homopolymer(master_df, exp, exp_dir)
@@ -665,13 +662,11 @@ def genotype_data(inp_dir, out_dir, nm, start, end):
 
     timer.update()
 
-  lib_table = pd.read_csv(_config.EXP_DESIGN_FILE)
+  REDUCED_LIB
   seq_contexts = []
   for s in master_df['_Experiment']:
-    crit = (lib_table['Name'] == s)
-    print crit
-    print s
-    seq = lib_table[crit]['Full target sequence'].iloc[0]
+    crit = (REDUCED_LIB['Name'] == s)
+    seq = REDUCED_LIB[crit]['Designed sequence (61-bp, cutsite at position 34 by 0-index)'].iloc[0]
     seq_contexts.append(seq)
   master_df['_Sequence Context'] = seq_contexts
 
@@ -685,20 +680,18 @@ def genotype_data(inp_dir, out_dir, nm, start, end):
 ##
 def gen_qsubs():
   # Generate qsub shell scripts and commands for easy parallelization
-  print 'Generating qsub scripts...'
+  print('Generating qsub scripts...')
   qsubs_dir = _config.QSUBS_DIR + NAME + '/'
   util.ensure_dir_exists(qsubs_dir)
   qsub_commands = []
 
   num_scripts = 0
-  for bc in [
-      
-      "LIB037937_GEN00140{0}_S{1}_L00{2}_R2".format(num, num - 696 + 8, lane)
-      for lane in range(1,5) for num in range(695,701)
-  ]:
+
+  for k, exp in SEQUENCING_INFO.iterrows():
+    bc = exp.Name
     for start in range(0, 1):
-      end = start + 48
-      command = 'python %s.py %s %s %s' % (NAME, bc, start, end)
+      end = len(REDUCED_LIB)
+      command = '/cluster/bh0085/anaconda27/envs/py3/bin/python %s.py %s %s %s' % (NAME, bc, start, end)
       script_id = NAME.split('_')[0]
 
       # Write shell scripts
@@ -714,12 +707,12 @@ def gen_qsubs():
   with open(qsubs_dir + '_commands.txt', 'w') as f:
     f.write('\n'.join(qsub_commands))
 
-  print 'Wrote %s shell scripts to %s' % (num_scripts, qsubs_dir)
+  print('Wrote %s shell scripts to %s' % (num_scripts, qsubs_dir))
   return
 
 @util.time_dec
 def main(inp_dir, out_dir, nm = '', start = '', end = ''):
-  print NAME  
+  print(NAME)  
   inp_dir = '%s%s/' % (inp_dir, nm)
   util.ensure_dir_exists(out_dir)
 
