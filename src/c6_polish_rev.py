@@ -328,8 +328,8 @@ def pcr_chomp_process_elements(read, genome):
     length = min(read_idx, genome_idx)
     package = (read[:length], genome[:length])
 
-  print(read, genome)
-  print(length)
+  #print(read, genome)
+  #print(length)
   new_read = read[length:]
   new_genome = genome[length:]
   return new_read, new_genome, element_nm, package
@@ -665,7 +665,7 @@ def gen_qsubs():
     bc = exp.Name
     for start in range(0, 1):
       end = len(REDUCED_LIB)
-      command = 'python %s.py %s %s %s' % (NAME, bc, 0, end)
+      command = '/cluster/bh0085/anaconda27/envs/py3/bin/python %s.py %s %s %s' % (NAME, bc, 0, end)
       script_id = NAME.split('_')[0]
 
       # Write shell scripts
