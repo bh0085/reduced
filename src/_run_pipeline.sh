@@ -9,3 +9,4 @@ python e_newgenotype_rev.py
 source ../qsubs/e_newgenotype_rev/_commands.txt
 python f0_py2_write_indelphi_genotypes.py
 python f1_agg_reports.py
+python f2_make_figures.py
