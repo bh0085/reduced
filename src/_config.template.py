@@ -1,18 +1,26 @@
 import os, re, sys
 import pandas as pd
-
+import datetime
 
 
 PRJ_DIR = '/cluster/bh0085/prj/reduced_all/reduced_liver/'
-PRJ_NAME = 'REDUCEDLIB_LIVER_May2019"
+PRJ_NAME = 'REDUCEDLIB_LIVER_May2019'
 
-#######################################################
+
+
+today = datetime.date.today()
+DATESTR = "{0:02}{0:02}".format(today.month,today.day)
+
+
+######################################################
 # Note: Directories should end in / always
 #######################################################
 SRC_DIR = os.path.join(PRJ_DIR , 'src/')
 DATA_DIR = os.path.join(PRJ_DIR , 'data/')
 OUT_PLACE = os.path.join(PRJ_DIR , 'out/')
 QSUBS_DIR = os.path.join( PRJ_DIR + 'qsubs/')
+FIGS_PLACE = os.path.join(PRJ_DIR , 'figs/')
+
 
 
 
@@ -49,7 +57,7 @@ for nm,vals in SEQUENCING_READS_META.items():
     
     #find fastq files using sequencing info DF
     if False in set(pd.notna(info.reads_location)):
-        raise Exception(f"missing reads data file for {nm}")
+        raise Exception("missing reads data file for {0}".format(nm))
     info["fastq"] = info.apply(lambda x:[fn for fn in os.listdir(x.reads_location) if ~(pd.isna(x.reads_location)) & ( fn[-5:]=="fastq") & ("_2_" in fn)][0],axis=1)
     info["fastq_path"] = info["reads_location"] +"/"+ info["fastq"]
     SEQUENCING_INFO = SEQUENCING_INFO.append(info)
