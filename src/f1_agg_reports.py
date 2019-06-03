@@ -30,6 +30,14 @@ results =pd.concat( [
 
 results["metacat"] = results.apply( lambda x: {"wildtype":"wildtype","del":"del","ins":"ins"}.get(x.Category,"other"),axis=1)
 results = results.loc[(results.Length.isna() ) | (results.Length< 15)]
+valid_names = SEQUENCING_INFO.loc[18:77].Name
+results = results.loc[results.sample_name.isin(valid_names)]
+
+
+valid_names = SEQUENCING_INFO.Name
+results = results.loc[results.sample_name.isin(valid_names)]
+results = results.join(SEQUENCING_INFO.set_index("Name")[["Description"]],on="sample_name")
+results = results.join(SEQUENCING_INFO.set_index("Name")[["drug_name","replicate"]],on="sample_name")
 
 
 #defines a helper function to get groups, return a count of zero if group does not exist
@@ -114,17 +122,25 @@ for k,guide in REDUCED_LIB.iterrows():
         deletion_length_r,pval = stats.pearsonr(deletion_lengths.predicted_freq,deletion_lengths.observed_freq)
         lib_results.at[k,"deletion_length_r"] = deletion_length_r
         lib_results.at[k,"deletion_length_pval"] = pval
-      
+
+
+agg_results = agg_results.join(SEQUENCING_INFO.set_index("Name")[["Description","drug_name","replicate"]])
+lib_results = lib_results.join(SEQUENCING_INFO.set_index("Name")[["Description","drug_name","replicate"]])
+
+resultsfile = os.path.join(OUT_DIR,f"{PRJ_NAME}_all_results.csv")
+results.to_csv(resultsfile)
+print(f"wrote all results to {resultsfile}")
+
 #
 #note, the transpose of this file gives per-sample results in a useful format for excel users
 #we take this transpose when writing to file
 #
 libfile = os.path.join(OUT_DIR,f"{PRJ_NAME}_library_stats.csv")
-lib_results.T.to_csv(libfile)
+lib_results.to_csv(libfile)
 print(f"wrote per-library results to {libfile}")
 
 aggfile = os.path.join(OUT_DIR,f"{PRJ_NAME}_aggregate_stats.csv")
-agg_results.T.to_csv(aggfile)
+agg_results.to_csv(aggfile)
 print(f"wrote aggregate results to {aggfile}")
 
 

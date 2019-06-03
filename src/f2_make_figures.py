@@ -63,7 +63,7 @@ x = lib_results.predicted_ins_of_crispr
 y = lib_results.frac_ins_of_crispr.fillna(0)
 
 
-gradient, intercept, r_value, p_value, std_err = sstats.linregress(x,y)
+gradient, intercept, r_value, p_value, std_err = stats.linregress(x,y)
 mn=np.min(x)
 mx=np.max(x)
 x1=np.linspace(mn,mx,500)
