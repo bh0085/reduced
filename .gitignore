@@ -19,5 +19,6 @@
 *split_cmds.txt
 
 .ipynb*
+*.pyc
 
 *.code-workspace
