@@ -9,6 +9,8 @@
 #/data/*
 #/out/*
 
+*.subproj.*
+
 /src/*.sh.e*
 /src/*.sh.o*
 /src/nh*.out
