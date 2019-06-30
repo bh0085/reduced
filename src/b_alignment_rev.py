@@ -2,6 +2,7 @@ import _config
 from _config import LIBRARY_DF, SEQUENCING_INFO, OUT_PLACE
 import sys, os, fnmatch, datetime, subprocess, copy
 import numpy as np
+from collections import defaultdict
 
 sys.path.append('/cluster/bh0085')
 from mybio import util
@@ -46,6 +47,8 @@ def alignment(read, cand_idxs):
   else:
     best_align = aligns[0]
     best_idx = cand_idxs[0]
+
+  
   return best_idx, best_align
 
 def pick_best_alignment(aligns):
@@ -118,7 +121,7 @@ def init_alignment_buffer():
 def flush_alignments(alignment_buffer, out_dir):
   #print(f'Flushing... \n{datetime.datetime.now()}' )
   for exp in alignment_buffer:
-    with open(out_dir + f'{exp}.txt', 'a') as f:
+    with open(os.path.join(out_dir, f'{exp}.txt'), 'a') as f:
       for align in alignment_buffer[exp]:
         f.write(align)
   new_alignment_buffer = init_alignment_buffer()
@@ -129,7 +132,7 @@ def flush_alignments(alignment_buffer, out_dir):
 
 def prepare_outfns(out_dir):
   for exp in names_targets:
-    out_fn = out_dir + '%s.txt' % (exp)
+    out_fn = os.path.join(out_dir , '%s.txt' % (exp))
     util.exists_empty_fn(out_fn)
   return
 
@@ -173,6 +176,7 @@ def matchmaker(nm, split):
           continue
 
         
+        
         #l2 = compbio.reverse_complement(l2)
         #l2 = l2[82] # -- note, changed from :61 to 61:. Can comment out entirely?
         l2 = reverse_complement(l2)
@@ -190,8 +194,6 @@ def matchmaker(nm, split):
         best_idx, align = alignment(l2, cand_idxs)
         align = align.decode("utf-8")
 
-        #if i %101 == 0:
-        #  print(align.decode("utf-8").count("-"))
 
         # Store alignment into buffer
         store_alignment(alignment_buffer, best_idx, align_header, align)

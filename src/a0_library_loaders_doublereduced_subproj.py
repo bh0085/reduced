@@ -34,7 +34,7 @@ for nm,vals in SEQUENCING_READS_META.items():
     info["r2_fastq_path"] = info.apply(lambda x: os.path.join(reads_place,f"LIB037937_{x.code}_S{x.s_num}_{x.lane_num}_R1.fastq"),axis=1)
     info["nm"] = nm
     info["reads_place"] = reads_place
-    info["Name"] = info["code"]
+    info["Name"] =  info.apply(lambda x:f"LIB037937_{x['code']}_S{x['s_num']}_L00{x['lane_num']}_R2",axis = 1)
     info["Description"] = info["desc"]
 
     SEQUENCING_INFO = SEQUENCING_INFO.append(info)
@@ -49,7 +49,8 @@ BIGGER_LIB = pd.merge(REDUCED_LIB[["Name"]].rename({"Name":"Name1"},axis="column
 BIGGER_LIB["seqleft"] =BIGGER_LIB.Name1.apply(lambda x: REDUCED_LIB.loc[x].seqleft)
 BIGGER_LIB["seqright"] =BIGGER_LIB.Name2.apply(lambda x: REDUCED_LIB.loc[x].seqright)
 BIGGER_LIB["targetseq_61"] = BIGGER_LIB["seqleft"] + BIGGER_LIB["seqright"]
-BIGGER_LIB["Name"] = BIGGER_LIB.apply(lambda x: f"{x.Name1}-{x.Name2}",axis = 1)
+BIGGER_LIB["StringName"] = BIGGER_LIB.apply(lambda x: f"{x.Name1}-{x.Name2}",axis = 1)
+BIGGER_LIB["Name"] = BIGGER_LIB.apply(lambda x: f"{int(x.Name1)*48+int(x.Name2)}",axis = 1)
 BIGGER_LIB = BIGGER_LIB.drop("key",axis = "columns")
 
 LIBRARY_DF= BIGGER_LIB

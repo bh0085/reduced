@@ -9,7 +9,7 @@ from collections import defaultdict
 from mybio import util, biofuncs
 
 import pandas as pd
-from _config import REDUCED_LIB, SEQUENCING_INFO
+from _config import LIBRARY_DF, SEQUENCING_INFO
 
 
 # Default params
@@ -662,11 +662,14 @@ def genotype_data(inp_dir, out_dir, nm, start, end):
 
     timer.update()
 
-  REDUCED_LIB
   seq_contexts = []
   for s in master_df['_Experiment']:
-    crit = (REDUCED_LIB['Name'] == s)
-    seq = REDUCED_LIB[crit]['Designed sequence (61-bp, cutsite at position 34 by 0-index)'].iloc[0]
+    crit = (LIBRARY_DF['Name'] == s)
+    if 'Designed sequence (61-bp, cutsite at position 34 by 0-index)' in LIBRARY_DF.columns:
+        seq = LIBRARY_DF[crit]['Designed sequence (61-bp, cutsite at position 34 by 0-index)'].iloc[0]
+    elif 'targetseq_61' in LIBRARY_DF.columns:
+        seq = LIBRARY_DF[crit]['targetseq_61'].iloc[0]
+        
     seq_contexts.append(seq)
   master_df['_Sequence Context'] = seq_contexts
 
@@ -690,7 +693,7 @@ def gen_qsubs():
   for k, exp in SEQUENCING_INFO.iterrows():
     bc = exp.Name
     for start in range(0, 1):
-      end = len(REDUCED_LIB)
+      end = len(LIBRARY_DF)
       command = '/cluster/bh0085/anaconda27/envs/py3/bin/python %s.py %s %s %s' % (NAME, bc, start, end)
       script_id = NAME.split('_')[0]
 

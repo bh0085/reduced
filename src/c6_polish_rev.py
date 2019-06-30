@@ -8,7 +8,7 @@ from collections import defaultdict
 from mybio import util
 import pickle
 
-from _config import REDUCED_LIB, SEQUENCING_INFO
+from _config import LIBRARY_DF, SEQUENCING_INFO
 
 # Default params
 inp_place = _config.OUT_PLACE + 'b_alignment_rev/'
@@ -664,7 +664,7 @@ def gen_qsubs():
   for k, exp in SEQUENCING_INFO.iterrows():
     bc = exp.Name
     for start in range(0, 1):
-      end = len(REDUCED_LIB)
+      end = len(LIBRARY_DF)
       command = '/cluster/bh0085/anaconda27/envs/py3/bin/python %s.py %s %s %s' % (NAME, bc, 0, end)
       script_id = NAME.split('_')[0]
 
