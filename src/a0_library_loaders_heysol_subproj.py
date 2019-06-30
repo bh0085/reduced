@@ -2,12 +2,13 @@ import pandas as pd
 import os
 
 
+
 #dictionary keyed by sequencing group names, containing:
 #  "reads_place" (with folders for each sequencing lane)
 #  "lib_file" (having names and descriptions associated with each sequencing lane)
 SEQUENCING_READS_META = {
                 "heysol":{"reads_place":"/cluster/bh0085/shortreads/FC_05081/Unaligned_1234_PF_mm1/Data/Project_richsherwood",
-                "lib_file":os.path.join(LIBS_DIR,"0630_reducedlib_heysol_sequencing_maps.csv")
+                "lib_file":os.path.join("../libs/0630_reducedlib_heysol_sequencing_maps.csv")
                                 }
                }
 
@@ -24,11 +25,11 @@ for nm,vals in SEQUENCING_READS_META.items():
     info["s_num"] = info["code_offset"] - 83
     lanes = pd.DataFrame([pd.Series({"lane_num":i}) for i in range(1,5)])
     info = pd.merge(info.assign(key=1),lanes.assign(key=1),on="key")
-    info["r1_fastq_path"] = info.apply(lambda x: os.path.join(reads_place,f"LIB041331__{x.code}_S{x.s_num}_{x.lane_num}_R1.fastq"),axis=1)
-    info["r2_fastq_path"] = info.apply(lambda x: os.path.join(reads_place,f"LIB041331__{x.code}_S{x.s_num}_{x.lane_num}_R1.fastq"),axis=1)
+    info["r1_fastq_path"] = info.apply(lambda x: os.path.join(reads_place,f"LIB041331_{x.code}_S{x.s_num}_L00{x.lane_num}_R1.fastq"),axis=1)
+    info["r2_fastq_path"] = info.apply(lambda x: os.path.join(reads_place,f"LIB041331_{x.code}_S{x.s_num}_L00{x.lane_num}_R2.fastq"),axis=1)
     info["nm"] = nm
     info["reads_place"] = reads_place
-    info["Name"] =  info.apply(lambda x:f"LIB041331_{x['code']}_S{x['s_num']}_L00{x['lane_num']}_R2",axis = 1)
+    info["Name"] =  info.apply(lambda x:f"LIB041331_{x['code']}_S{x['s_num']}_L00{x['lane_num']}",axis = 1)
     info["Description"] = info["desc"]
 
     SEQUENCING_INFO = SEQUENCING_INFO.append(info)
