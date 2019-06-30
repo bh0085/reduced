@@ -17,7 +17,7 @@ OUT_PLACE = os.path.join(PRJ_DIR , 'out/')
 QSUBS_DIR = os.path.join( PRJ_DIR + 'qsubs/')
 FIGS_PLACE = os.path.join(PRJ_DIR , 'figs/')
 LOGS_DIR = os.path.join(PRJ_DIR, 'logs/')
-
+LIBS_DIR = os.path.join(PRJ_DIR,'libs/')
 
 #parse sequencing data information 
 from a0_library_loaders_heysol_subproj import SEQUENCING_INFO, LIBRARY_DF
