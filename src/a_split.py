@@ -1,12 +1,12 @@
 # 
-from _config import SEQUENCING_INFO, REDUCED_LIB, OUT_PLACE
+from _config import SEQUENCING_INFO, OUT_PLACE
 
 
 import pandas as pd
 import numpy as np
 import os, sys, re
 
-import sys, os, datetime, subprocess, imp
+import sys, os, datetime, subprocess
 sys.path.append('/cluster/bh0085/')
 from mybio import util
 
@@ -22,7 +22,6 @@ util.ensure_dir_exists(out_dir)
 # Functions
 ##
 def split(inp_fn, out_nm):
-  print (inp_fn)
   inp_fn_numlines = util.line_count(inp_fn)
 
   num_splits = 15
@@ -31,7 +30,6 @@ def split(inp_fn, out_nm):
     split_size += 1
   while split_size % 4 != 0:
     split_size += 1
-  print (f'Using split size {split_size}')
 
   split_num = 0
   for idx in range(1, inp_fn_numlines, split_size):
@@ -48,10 +46,11 @@ def split(inp_fn, out_nm):
 ##
 # Main
 ##
-@util.time_dec
 def main(): 
   for k, row in SEQUENCING_INFO.iterrows():
-      split(row.fastq_path, row.Name)
+      split(row.r1_fastq_path, row.Name+"_R1")
+      split(row.r2_fastq_path, row.Name+"_R2")
+
 
   return
 
