@@ -22,7 +22,7 @@ util.ensure_dir_exists(out_dir)
 # Functions
 ##
 def split(inp_fn, out_nm):
-  print (inp_fn)
+  #print (inp_fn)
   inp_fn_numlines = util.line_count(inp_fn)
 
   num_splits = 15
@@ -31,7 +31,7 @@ def split(inp_fn, out_nm):
     split_size += 1
   while split_size % 4 != 0:
     split_size += 1
-  print (f'Using split size {split_size}')
+  #print (f'Using split size {split_size}')
 
   split_num = 0
   for idx in range(1, inp_fn_numlines, split_size):
@@ -48,7 +48,7 @@ def split(inp_fn, out_nm):
 ##
 # Main
 ##
-@util.time_dec
+#@util.time_dec
 def main(): 
   for k, row in SEQUENCING_INFO.iterrows():
       split(row.fastq_path, row.Name)
