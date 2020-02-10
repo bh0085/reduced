@@ -1,12 +1,12 @@
 # 
-from _config import SEQUENCING_INFO, REDUCED_LIB, OUT_PLACE
+from _config import SEQUENCING_INFO, OUT_PLACE
 
 
 import pandas as pd
 import numpy as np
 import os, sys, re
 
-import sys, os, datetime, subprocess, imp
+import sys, os, datetime, subprocess
 sys.path.append('/cluster/bh0085/')
 from mybio import util
 
@@ -51,7 +51,9 @@ def split(inp_fn, out_nm):
 #@util.time_dec
 def main(): 
   for k, row in SEQUENCING_INFO.iterrows():
-      split(row.fastq_path, row.Name)
+      split(row.r1_fastq_path, row.Name+"_R1")
+      split(row.r2_fastq_path, row.Name+"_R2")
+
 
   return
 
