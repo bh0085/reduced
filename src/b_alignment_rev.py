@@ -149,7 +149,7 @@ def matchmaker(nm, split):
   out_dir = os.path.join(out_root_dir, nm , split)
   util.ensure_dir_exists(out_dir)
 
-  inp_fn = inp_dir + '%s_%s.fastq' % (nm, split)
+  inp_fn = inp_dir + '%s_R1_%s.fastq' % (nm, split)
 
   lsh_dict = build_targets_better_lsh()
   alignment_buffer = init_alignment_buffer()
