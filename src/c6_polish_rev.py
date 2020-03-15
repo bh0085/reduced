@@ -700,7 +700,7 @@ def main(nm = '', start = '', end = ''):
   print('Done')
 
   global expected_cutsite
-  expected_cutsite = 34
+  expected_cutsite = 30
 
   inp_dir = inp_place + nm + '/'
 
